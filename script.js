@@ -1,48 +1,51 @@
-document.getElementById('search-btn').addEventListener('click', getWeather);
+// Replace with your OpenWeatherMap API key
+const API_KEY = '9c3b29505a8c5a989252939c6979e23b';
 
-// Replace with your own API key from OpenWeatherMap (it's free)
-E'; 
+document.getElementById('search-btn').addEventListener('click', () => {
+    const city = document.getElementById('city-input').value.trim();
+    if (city) {
+        fetchWeather(city);
+    } else {
+        alert('Please enter a city name');
+    }
+});
 
-function getWeather() {
-    const city = document.getElementById('city-input').value;
+async function fetchWeather(city) {
+    try {
+        const response = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+        );
         
-            if (!city) {
-                    alert('Please enter a city name');
-                            return;
-                                }
-
-                                    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
-                                            .then(response => {
-                                                    9c3b29505a8c5a989252939c6979e23b'; 
-
-function getWeather() {
-    const city = document.getElementById('city-input').value;
+        if (!response.ok) {
+            throw new Error('City not found');
+        }
         
-            if (!city) {
-                    alert('Please enter a city name');
-                            return;
-                                }
+        const data = await response.json();
+        displayWeather(data);
+    } catch (error) {
+        alert(error.message);
+        console.error('Error fetching weather:', error);
+    }
+}
 
-                                    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`)
-                                            .then(response => {
-                                                        if (!response.ok) {
-                                                                        throw new Error('City not found');
-                                                                                    }
-                                                                                                return response.json();
-                                                                                                        })
-                                                                                                                .then(data => {
-                                                                                                                            displayWeather(data);
-                                                                                                                                    })
-                                                                                                                                            .catch(error => {
-                                                                                                                                                        alert(error.message);
-                                                                                                                                                                    console.error('Error:', error);
-                                                                                                                                                                            });
-                                                                                                                                                                            }
-
-                                                                                                                                                                            function displayWeather(data) {
-                                                                                                                                                                                document.getElementById('location').textContent = `${data.name}, ${data.sys.country}`;
-                                                                                                                                                                                    document.getElementById('temperature').textContent = `${Math.round(data.main.temp)}°C`;
-                                                                                                                                                                                        document.getElementById('description').textContent = data.weather[0].description;
-                                                                                                                                                                                            document.getElementById('humidity').textContent = `${data.main.humidity}%`;
-                                                                                                                                                                                                document.getElementById('wind').textContent = `${data.wind.speed} km/h`;
-                                                                                                                                                                                                }
+function displayWeather(data) {
+    const weatherInfo = document.getElementById('weather-info');
+    const cityName = document.getElementById('city-name');
+    const temperature = document.getElementById('temperature');
+    const weatherIcon = document.getElementById('weather-icon');
+    const weatherDesc = document.getElementById('weather-description');
+    const humidity = document.getElementById('humidity');
+    const wind = document.getElementById('wind');
+    
+    cityName.textContent = `${data.name}, ${data.sys.country}`;
+    temperature.textContent = `${Math.round(data.main.temp)}°C`;
+    weatherDesc.textContent = data.weather[0].description;
+    humidity.textContent = `${data.main.humidity}%`;
+    wind.textContent = `${data.wind.speed} m/s`;
+    
+    weatherIcon.src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+    weatherIcon.alt = data.weather[0].description;
+    
+    weatherInfo.style.display = 'block';
+}
+                                                                                  
